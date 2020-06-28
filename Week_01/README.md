@@ -104,8 +104,6 @@
            return []
    ```
 
-   
-
    这是最容易想到的答案。因为有双层循环，时间复杂度*O*(*n*2)，不是最优解
 
 2. 利用哈希表
@@ -155,7 +153,56 @@
 
 ### 合并两个有序数组
 
+[合并两个有序数组](https://leetcode-cn.com/problems/merge-sorted-array/)
 
+> 给你两个有序整数数组 *nums1* 和 *nums2*，请你将 *nums2* 合并到 *nums1* 中*，*使 *nums1* 成为一个有序数组。
 
+1. 合并后排序
 
+   ```python3
+   class Solution(object):
+       def merge(self, nums1, m, nums2, n):
+           nums1[:] = sorted(nums1[:m] + nums2)
+   ```
 
+   合并后排序，是最能想到的方法，同时也是比较基本的方法。
+
+   时间复杂度为O((n+m)log(n+m))
+
+2. 双指针 / 从前往后
+
+   利用双指针法，可以达到O(m+n)的时间复杂度。
+
+   将指针p1 置为 nums1的开头， p2为 nums2的开头，在每一步将最小值放入输出数组中。
+
+   需要考虑到，由于 nums1 是用于输出的数组，所以要把nums1中的前m个元素放在其他地方，也就需要 O(m) 的空间复杂度。
+
+3. 双指针 / 从后往前
+
+   方法2的时间复杂度已经很优秀了，但是却使用了额外的空间，我们可以在方法2的基础上进一步优化。
+
+   如果把指针改为从结尾开始，把每一步的较大值放到末尾，则可以省去额外的空间，达到O(1)的空间复杂度。
+
+   综上，可以写出最优的算法：
+
+   ```python
+   class Solution:
+       def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+           """
+           Do not return anything, modify nums1 in-place instead.
+           """
+           p1 = m - 1
+           p2 = n - 1
+           p = m + n - 1
+
+           while p1 >= 0 and p2 >= 0:
+               if nums1[p1] < nums2[p2]:
+                   nums1[p] = nums2[p2]
+                   p2 -= 1
+               else:
+                   nums1[p] =  nums1[p1]
+                   p1 -= 1
+               p -= 1
+
+           nums1[:p2 + 1] = nums2[:p2 + 1]
+   ```
